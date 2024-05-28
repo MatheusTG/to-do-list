@@ -1,0 +1,22 @@
+:root {
+  --blue: #4ea8de;
+  --blue-dark: #1e6f9f;
+  --purple-dark: #5e60ce;
+
+  --gray-100: #ffffff;
+  --gray-300: #808080;
+  --gray-500: #262626;
+  --gray-600: #191919;
+  --gray-700: #0d0d0d;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--gray-600);
+}
