@@ -19,11 +19,11 @@
   border-radius: 50%;
 }
 
-.createdTaks {
+.createdtask {
   color: var(--blue);
 }
 
-.completedTaks {
+.completedtask {
   color: var(--purple);
 }
 
