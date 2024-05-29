@@ -27,14 +27,19 @@
   color: var(--purple);
 }
 
-.tasks main {
+.noTasks {
+  gap: 1rem;
   display: grid;
   justify-items: center;
   justify-content: center;
-  gap: 1rem;
   padding-top: 4rem;
   border-top: 1px solid var(--gray-400);
   border-radius: 0.5rem;
+}
+
+.tasksList {
+  display: grid;
+  gap: 0.75rem;
 }
 
 .tasks main p {

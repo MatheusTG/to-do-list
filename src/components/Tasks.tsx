@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Tasks.module.css";
-import Clipboard from "../assets/icons/Clipboard.svg?react";
+// import Clipboard from "../assets/icons/Clipboard.svg?react";
+import Task from "./Task";
 
 const Tasks = () => {
   return (
@@ -14,10 +15,32 @@ const Tasks = () => {
         </div>
       </header>
       <main>
-        <Clipboard />
-        <div>
-          <p className={styles.tasksMsg01}>Você ainda não tem tarefas cadastradas</p>
-          <p className={styles.tasksMsg02}>Crie tarefas e organize seus itens a fazer</p>
+        {/* <div className={styles.noTasks}>
+          <div className={styles.clipboard}>
+            <Clipboard />
+          </div>
+          <div>
+            <p className={styles.tasksMsg01}>Você ainda não tem tarefas cadastradas</p>
+            <p className={styles.tasksMsg02}>Crie tarefas e organize seus itens a fazer</p>
+          </div>
+        </div> */}
+        <div className={styles.tasksList}>
+          <Task
+            checked={false}
+            message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Facere, amet?"
+          />
+          <Task
+            checked={false}
+            message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Facere, amet?"
+          />
+          <Task
+            checked={true}
+            message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Facere, amet?"
+          />
+          <Task
+            checked={true}
+            message="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Facere, amet?"
+          />
         </div>
       </main>
     </section>
