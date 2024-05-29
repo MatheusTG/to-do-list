@@ -4,6 +4,8 @@ import Rocket from "../assets/icons/Rocket.svg?react";
 import Plus from "../assets/icons/Plus.svg?react";
 import { useTasks } from "../context/TaskContext";
 import Error from "./Helper/Error";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const Header = () => {
   const [message, setMessase] = React.useState("");
@@ -21,7 +23,17 @@ const Header = () => {
         id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
       }
 
-      const newTask = { id: id, checked: false, message: message };
+      // Criando nova task
+      const date = new Date();
+      const formattedDate = format(date, "d 'de' MMMM 'às' HH:mm", {
+        locale: ptBR,
+      });
+      const newTask = {
+        id: id,
+        checked: false,
+        message: message,
+        date: formattedDate,
+      };
       setTasks(() => [...tasks, newTask]);
       setMessase("");
     }
