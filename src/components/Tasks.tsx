@@ -2,36 +2,32 @@ import React from "react";
 import styles from "./Tasks.module.css";
 import Clipboard from "../assets/icons/Clipboard.svg?react";
 import Task from "./Task";
-import { TaskType } from "./Task";
+import { useTasks } from "../context/TaskContext";
 
-interface Props {
-  tasks: TaskType[];
-  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
-}
+const Tasks = () => {
+  const { tasks } = useTasks();
 
-const Tasks = ({ tasks, setTasks }: Props) => {
-  console.log(tasks);
+  const createdTasks = tasks.length;
+  const compretedTasks = tasks.filter((item) => item.checked).length;
 
   return (
     <section className={`${styles.tasks} container`}>
       <header className={styles.tasksHeader}>
         <div className={styles.createdtask}>
-          Tarefas criadas<span>0</span>
+          Tarefas criadas<span>{createdTasks}</span>
         </div>
         <div className={styles.completedtask}>
-          Concluídas<span>0</span>
+          Concluídas
+          <span>
+            {compretedTasks ? `${compretedTasks} de ${createdTasks}` : "0"}
+          </span>
         </div>
       </header>
       <main>
         {tasks.length ? (
           <div className={styles.tasksList}>
             {tasks.map((task) => (
-              <Task
-                key={task.message}
-                checked={task.checked}
-                message={task.message}
-                setTasks={setTasks}
-              />
+              <Task key={task.id} id={task.id} />
             ))}
           </div>
         ) : (

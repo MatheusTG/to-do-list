@@ -1,28 +1,41 @@
 import React from "react";
 import styles from "./Task.module.css";
 import Trash from "../assets/icons/Trash.svg?react";
+import { useTasks } from "../context/TaskContext";
 
 export interface TaskType {
+  id: number;
   checked: boolean;
   message: string;
 }
 
-interface Props extends TaskType {
-  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
-}
+const Task = ({ id }: { id: number }) => {
+  const { tasks, setTasks } = useTasks();
 
-const Task = ({ checked, message, setTasks }: Props) => {
-  console.log(checked);
+  const task = tasks.filter((task) => task.id === id)[0];
+
+  function handleCheckedClick() {
+    const teste = tasks.map((item) => {
+      if (item.id === task.id) {
+        item.checked = !item.checked;
+      }
+      return item;
+    });
+
+    setTasks(teste);
+  }
+
   return (
     <div className={styles.task}>
-      <button className={`${styles.checkedButton} ${styles.checked}`} />
-      {message}
+      <button
+        className={`${styles.checkedButton} ${task.checked && styles.checked}`}
+        onClick={handleCheckedClick}
+      />
+      <span>{task.message}</span>
       <button
         className={styles.trash}
         onClick={() =>
-          setTasks((taskList) =>
-            taskList.filter((task) => task.message !== message)
-          )
+          setTasks(() => tasks.filter((taskItem) => taskItem.id !== task.id))
         }
       >
         <Trash />

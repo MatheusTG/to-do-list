@@ -2,17 +2,23 @@ import React from "react";
 import styles from "./Header.module.css";
 import Rocket from "../assets/icons/Rocket.svg?react";
 import Plus from "../assets/icons/Plus.svg?react";
-import { TaskType } from "./Task";
-interface Props {
-  setTasks: React.Dispatch<React.SetStateAction<TaskType[]>>;
-}
+import { useTasks } from "../context/TaskContext";
 
-const Header = ({ setTasks }: Props) => {
+const Header = () => {
   const [message, setMessase] = React.useState("");
 
+  const { tasks, setTasks } = useTasks();
+
   function handleClick() {
-    setTasks((taskList) => [...taskList, { checked: false, message: message }]);
-    setMessase('')
+    // Difinindo id da task
+    let id = 0;
+    if (tasks.length) {
+      id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+    }
+
+    const newTask = { id: id, checked: false, message: message };
+    setTasks(() => [...tasks, newTask]);
+    setMessase("");
   }
 
   return (
