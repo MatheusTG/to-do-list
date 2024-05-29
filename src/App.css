@@ -1,10 +1,12 @@
 :root {
   --blue: #4ea8de;
   --blue-dark: #1e6f9f;
+  --purple: #8284fa;
   --purple-dark: #5e60ce;
 
   --gray-100: #ffffff;
   --gray-300: #808080;
+  --gray-400: #333333;
   --gray-500: #262626;
   --gray-600: #191919;
   --gray-700: #0d0d0d;
@@ -19,4 +21,29 @@
 body {
   font-family: "Inter", sans-serif;
   background-color: var(--gray-600);
+}
+
+.container {
+  width: 50vw;
+  margin: auto;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: 65vw;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    width: 80vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 100vw;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }

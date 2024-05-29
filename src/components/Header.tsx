@@ -13,7 +13,7 @@ const Header = () => {
         </h1>
       </div>
 
-      <form className={styles.form}>
+      <form className={`${styles.form} container`}>
         <input type="text" placeholder="Adicione uma nova tarefa" />
         <button>
           Criar <Plus />

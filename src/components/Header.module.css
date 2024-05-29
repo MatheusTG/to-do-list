@@ -1,10 +1,16 @@
 .header {
   display: grid;
-  justify-content: center;
   justify-items: center;
   background-color: var(--gray-700);
   height: 12.5rem;
   position: relative;
+  margin-bottom: 5rem;
+}
+
+@media (max-width: 720px) {
+  .header {
+    height: 10rem;
+  }
 }
 
 .logoContainer {
@@ -24,8 +30,7 @@
 }
 
 .form {
-  display: grid;
-  grid-template-columns: minmax(16rem, 40vw) auto;
+  display: flex;
   gap: 0.5rem;
   position: absolute;
   bottom: 0px;
@@ -33,6 +38,7 @@
 }
 
 .form input {
+  width: 100%;
   background-color: var(--gray-500);
   color: var(--gray-300);
   border: none;
@@ -55,4 +61,9 @@
   border: none;
   color: var(--gray-100);
   padding: 1rem;
+}
+
+.form button:hover {
+  background-color: var(--blue);
+  transition: 0.1s;
 }

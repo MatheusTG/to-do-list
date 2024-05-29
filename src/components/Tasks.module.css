@@ -1,0 +1,51 @@
+.tasksHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.tasksHeader div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.tasksHeader span {
+  color: var(--gray-100);
+  background-color: var(--gray-400);
+  padding: 0.125rem 0.5rem;
+  border-radius: 50%;
+}
+
+.createdTaks {
+  color: var(--blue);
+}
+
+.completedTaks {
+  color: var(--purple);
+}
+
+.tasks main {
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 4rem;
+  border-top: 1px solid var(--gray-400);
+  border-radius: 0.5rem;
+}
+
+.tasks main p {
+  color: var(--gray-300);
+  text-align: center;
+}
+
+.tasksMsg01 {
+  font-weight: 700;
+}
+
+.tasksMsg02 {
+  font-weight: 400;
+}
