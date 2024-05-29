@@ -26,15 +26,21 @@
 }
 
 .logo span {
-  color: var(--purple-dark);
+  color: var(--purple-dark);  
 }
 
 .form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 0.5rem;
   position: absolute;
   bottom: 0px;
   transform: translateY(50%);
+}
+
+.form p {
+  position: absolute;
+  bottom: -1.5rem;
 }
 
 .form input {

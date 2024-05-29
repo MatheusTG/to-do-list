@@ -1,3 +1,7 @@
+.tasks {
+  margin-bottom: 5rem;
+}
+
 .tasksHeader {
   display: flex;
   justify-content: space-between;

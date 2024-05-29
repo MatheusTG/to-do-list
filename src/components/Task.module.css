@@ -15,12 +15,25 @@
   align-self: start;
 }
 
+.trash path {
+  transition: 0.1s;
+}
+
+.trash:hover path {
+  fill: var(--gray-100);
+}
+
 .checkedButton {
   background-color: transparent;
   border-radius: 50%;
   border: 2px solid var(--blue);
   width: 1.09rem;
   height: 1.09rem;
+  transition: 0.1s;
+}
+
+.checkedButton:hover {
+  border-color: var(--purple-dark);
 }
 
 .checkedButton.checked {
@@ -28,6 +41,7 @@
   background-color: var(--purple-dark);
   border-color: var(--purple-dark);
 }
+
 
 .checkedButton.checked + span {
   text-decoration: line-through;

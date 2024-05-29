@@ -3,22 +3,33 @@ import styles from "./Header.module.css";
 import Rocket from "../assets/icons/Rocket.svg?react";
 import Plus from "../assets/icons/Plus.svg?react";
 import { useTasks } from "../context/TaskContext";
+import Error from "./Helper/Error";
 
 const Header = () => {
   const [message, setMessase] = React.useState("");
+  const [error, setError] = React.useState("");
 
   const { tasks, setTasks } = useTasks();
 
   function handleClick() {
-    // Difinindo id da task
-    let id = 0;
-    if (tasks.length) {
-      id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
-    }
+    if (!message.trim()) {
+      setError("Digite algo para adicionar uma task.");
+    } else {
+      // Difinindo id da task
+      let id = 0;
+      if (tasks.length) {
+        id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      }
 
-    const newTask = { id: id, checked: false, message: message };
-    setTasks(() => [...tasks, newTask]);
-    setMessase("");
+      const newTask = { id: id, checked: false, message: message };
+      setTasks(() => [...tasks, newTask]);
+      setMessase("");
+    }
+  }
+
+  function handleChange({ target }: React.ChangeEvent<HTMLInputElement>) {
+    if (error && target.value) setError("");
+    setMessase(target.value);
   }
 
   return (
@@ -40,11 +51,12 @@ const Header = () => {
           placeholder="Adicione uma nova tarefa"
           name="task"
           value={message}
-          onChange={({ target }) => setMessase(target.value)}
+          onChange={handleChange}
         />
         <button onClick={handleClick}>
           Criar <Plus />
         </button>
+        {error && <Error message={error} />}
       </form>
     </header>
   );
