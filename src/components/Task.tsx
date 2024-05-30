@@ -21,10 +21,8 @@ const Task = ({ id }: { id: number }) => {
   const inputMessage = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (active) {
-      if (inputMessage.current?.disabled) inputMessage.current?.blur();
-      else inputMessage.current?.focus();
-    }
+    if (active) inputMessage.current?.focus();
+    else inputMessage.current?.blur();
   }, [active]);
 
   function handleCheckedClick() {
@@ -63,6 +61,7 @@ const Task = ({ id }: { id: number }) => {
         value={message}
         onChange={handleMessageChange}
         onBlur={() => setTimeout(() => setActive(false), 100)}
+        onKeyUp={({ key }) => key === "Enter" && setActive(false)}
         style={{ pointerEvents: "none" }}
       />
       <div className={styles.options}>
