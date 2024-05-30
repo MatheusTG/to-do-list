@@ -1,15 +1,22 @@
-.taskContainer {
+.task {
   display: grid;
   gap: 0.25rem;
   position: relative;
   transition: 0.2s;
+  cursor: pointer;
 }
 
-.taskContainer.active {
-  margin-top: 1rem;
+.task.active {
+  background-color: var(--gray-600);
+  outline: 2px solid var(--gray-500);
 }
 
-.taskContainer .date {
+.task.active {
+  margin-top: 1.125rem;
+}
+
+.task .date {
+  width: 100%;
   opacity: 0;
   top: 0.5rem;
   text-align: start;
@@ -20,9 +27,9 @@
   position: absolute;
 }
 
-.taskContainer.active .date {
+.task.active .date {
   opacity: initial;
-  top: -1rem;
+  top: -1.125rem;
 }
 
 .task {

@@ -38,10 +38,6 @@ const Task = ({ id }: { id: number }) => {
     setTasks(teste);
   }
 
-  function handleEditClick() {
-    setActive(true);
-  }
-
   function handleMessageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setMessage(event.target.value);
     tasks[tasks.indexOf(task)].message = message;
@@ -50,44 +46,39 @@ const Task = ({ id }: { id: number }) => {
 
   return (
     <div
-      className={`${styles.taskContainer} ${active && styles.active}`}
+      className={`${styles.task} ${active && styles.active}`}
       onClick={(event) =>
         event.target instanceof HTMLDivElement && setActive(!active)
       }
     >
-      <p className={styles.date}>{task.date}</p>
-      <div className={styles.task}>
+      <p className={styles.date}>Última alteração - {task.date}</p>
+      <button
+        className={`${styles.checkedButton} ${task.checked && styles.checked}`}
+        onClick={handleCheckedClick}
+      />
+      <input
+        ref={inputMessage}
+        className={styles.message}
+        type="text"
+        value={message}
+        onChange={handleMessageChange}
+        onBlur={() => setTimeout(() => setActive(false), 100)}
+        style={{ pointerEvents: "none" }}
+      />
+      <div className={styles.options}>
         <button
-          className={`${styles.checkedButton} ${
-            task.checked && styles.checked
-          }`}
-          onClick={handleCheckedClick}
-        />
-        <input
-          ref={inputMessage}
-          className={styles.message}
-          type="text"
-          value={message}
-          onChange={handleMessageChange}
-          style={{ pointerEvents: "none" }}
-        />
-        <div className={styles.options}>
-          <button
-            className={active ? styles.active : ""}
-            onClick={handleEditClick}
-          >
-            <Pencil />
-          </button>
-          <button
-            onClick={() =>
-              setTasks(() =>
-                tasks.filter((taskItem) => taskItem.id !== task.id)
-              )
-            }
-          >
-            <Trash />
-          </button>
-        </div>
+          className={active ? styles.active : ""}
+          onClick={() => setActive(!active)}
+        >
+          <Pencil />
+        </button>
+        <button
+          onClick={() =>
+            setTasks(() => tasks.filter((taskItem) => taskItem.id !== task.id))
+          }
+        >
+          <Trash />
+        </button>
       </div>
     </div>
   );
