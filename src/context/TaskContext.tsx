@@ -17,6 +17,11 @@ export const useTasks = () => {
 export const TasksContextProvider = ({ children }: React.PropsWithChildren) => {
   const [tasks, setTasks] = React.useState<TaskType[]>([]);
 
+  React.useEffect(() => {
+    const tasksLocalStorage = window.localStorage.getItem("tasks");
+    if (tasksLocalStorage) setTasks(JSON.parse(tasksLocalStorage));
+  }, []);
+
   return (
     <TaskContext.Provider value={{ tasks, setTasks }}>
       {children}

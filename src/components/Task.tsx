@@ -3,6 +3,8 @@ import styles from "./Task.module.css";
 import Trash from "../assets/icons/Trash.svg?react";
 import Pencil from "../assets/icons/Pencil.svg?react";
 import { useTasks } from "../context/TaskContext";
+import { ptBR } from "date-fns/locale";
+import { format } from "date-fns";
 
 export interface TaskType {
   id: number;
@@ -19,6 +21,10 @@ const Task = ({ id }: { id: number }) => {
   const [message, setMessage] = React.useState(task.message);
 
   const inputMessage = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    window.localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   React.useEffect(() => {
     if (active) inputMessage.current?.focus();
@@ -39,6 +45,16 @@ const Task = ({ id }: { id: number }) => {
   function handleMessageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setMessage(event.target.value);
     tasks[tasks.indexOf(task)].message = message;
+    setTasks(tasks);
+
+    // Define uma nova data para a task após uma alteração
+    tasks[tasks.indexOf(task)].date = format(
+      new Date(),
+      "d 'de' MMMM 'às' HH:mm",
+      {
+        locale: ptBR,
+      }
+    );
     setTasks(tasks);
   }
 
