@@ -19,83 +19,123 @@ const Task = ({ id }: { id: number }) => {
 
   const [active, setActive] = React.useState(false);
   const [message, setMessage] = React.useState(task.message);
+  const [taskTransition, setTaskTransition] = React.useState("0.2s");
 
   const inputMessage = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    window.localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  const taskElement = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (active) inputMessage.current?.focus();
     else inputMessage.current?.blur();
   }, [active]);
 
+  React.useEffect(() => {
+    window.localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
   function handleCheckedClick() {
-    const teste = tasks.map((item) => {
+    const isChecked = tasks.map((item) => {
       if (item.id === task.id) {
         item.checked = !item.checked;
       }
       return item;
     });
 
-    setTasks(teste);
+    setTasks(isChecked);
   }
 
-  function handleMessageChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setMessage(event.target.value);
-    tasks[tasks.indexOf(task)].message = message;
-    setTasks(tasks);
+  function handleBlur() {
+    setTimeout(() => setActive(false), 100);
 
-    // Define uma nova data para a task após uma alteração
-    tasks[tasks.indexOf(task)].date = format(
-      new Date(),
-      "d 'de' MMMM 'às' HH:mm",
-      {
-        locale: ptBR,
-      }
-    );
-    setTasks(tasks);
+    // Recria as tasks atualizando os atributos message
+    // e date da task atual
+    if (task.message !== message) {
+      const updatedTask = tasks.map((taskItem) => {
+        if (taskItem.id === task.id)
+          return {
+            ...taskItem,
+            message: message,
+            date: format(new Date(), "d 'de' MMMM 'às' HH:mm", {
+              locale: ptBR,
+            }),
+          };
+        else return taskItem;
+      });
+      setTasks(updatedTask);
+    }
+  }
+
+  const [copia, setCopia] = React.useState<HTMLElement | null>(null);
+  const [style, setStyle] = React.useState<React.CSSProperties>({});
+  function handleTaskMouseDown(event: React.MouseEvent<HTMLDivElement>) {
+    function onMouseMove({ clientX, clientY }: MouseEvent) {
+      setTaskTransition("");
+      setCopia(taskElement.current);
+      if (event.target instanceof HTMLElement)
+        setStyle({
+          zIndex: "1000",
+          position: "absolute",
+          left: clientX - event.target.offsetWidth * 0.5,
+          top: clientY,
+        });
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", () => {
+      setCopia(null);
+      setStyle({});
+      setTaskTransition("0.2s");
+      window.removeEventListener("mousemove", onMouseMove);
+    });
   }
 
   return (
-    <div
-      className={`${styles.task} ${active && styles.active}`}
-      onClick={(event) =>
-        event.target instanceof HTMLDivElement && setActive(!active)
-      }
-    >
-      <p className={styles.date}>Última alteração - {task.date}</p>
-      <button
-        className={`${styles.checkedButton} ${task.checked && styles.checked}`}
-        onClick={handleCheckedClick}
-      />
-      <input
-        ref={inputMessage}
-        className={styles.message}
-        type="text"
-        value={message}
-        onChange={handleMessageChange}
-        onBlur={() => setTimeout(() => setActive(false), 100)}
-        onKeyUp={({ key }) => key === "Enter" && setActive(false)}
-        style={{ pointerEvents: "none" }}
-      />
-      <div className={styles.options}>
+    <>
+      {copia && (
+        <div className={`${styles.task} ${styles.taskSkeleton} container`} />
+      )}
+      <div
+        ref={taskElement}
+        className={`${styles.task} ${active && styles.active} container`}
+        onMouseDown={handleTaskMouseDown}
+        style={{ ...style, transition: taskTransition }}
+      >
+        <p className={styles.date}>Última alteração - {task.date}</p>
         <button
-          className={active ? styles.active : ""}
-          onClick={() => setActive(!active)}
-        >
-          <Pencil />
-        </button>
-        <button
-          onClick={() =>
-            setTasks(() => tasks.filter((taskItem) => taskItem.id !== task.id))
-          }
-        >
-          <Trash />
-        </button>
+          className={`${styles.checkedButton} ${
+            task.checked && styles.checked
+          }`}
+          onClick={handleCheckedClick}
+        />
+        <input
+          ref={inputMessage}
+          className={styles.message}
+          type="text"
+          value={message}
+          onChange={({ target }) => setMessage(target.value)}
+          onBlur={handleBlur}
+          onKeyUp={({ key }) => key === "Enter" && setActive(false)}
+          style={{ pointerEvents: "none" }}
+        />
+        <div className={styles.options}>
+          <button
+            className={active ? styles.active : ""}
+            onClick={() => setActive(!active)}
+          >
+            <Pencil />
+          </button>
+          <button
+            onClick={() =>
+              setTasks(() =>
+                tasks.filter((taskItem) => taskItem.id !== task.id)
+              )
+            }
+          >
+            <Trash />
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

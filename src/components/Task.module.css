@@ -2,7 +2,10 @@
   display: grid;
   gap: 0.25rem;
   position: relative;
-  transition: 0.2s;
+  cursor: grab;
+}
+
+.task button {
   cursor: pointer;
 }
 
@@ -101,4 +104,10 @@
 .checkedButton.checked + input {
   text-decoration: line-through;
   color: var(--gray-300);
+}
+
+.taskSkeleton {
+  height: 60px;
+  background-color: var(--gray-400);
+  opacity: 0.2;
 }
