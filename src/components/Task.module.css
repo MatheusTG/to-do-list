@@ -3,6 +3,7 @@
   gap: 0.25rem;
   position: relative;
   cursor: grab;
+  margin-top: 0px;
 }
 
 .task button {
@@ -12,9 +13,6 @@
 .task.active {
   background-color: var(--gray-600);
   outline: 2px solid var(--gray-500);
-}
-
-.task.active {
   margin-top: 1.125rem;
 }
 

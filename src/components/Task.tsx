@@ -67,21 +67,43 @@ const Task = ({ id }: { id: number }) => {
 
   const [copia, setCopia] = React.useState<HTMLElement | null>(null);
   const [style, setStyle] = React.useState<React.CSSProperties>({});
+  const [skeletonOrder, setSkeletonOrder] = React.useState("");
+  const orderTeste = React.useRef(0);
   function handleTaskMouseDown(event: React.MouseEvent<HTMLDivElement>) {
-    function onMouseMove({ clientX, clientY }: MouseEvent) {
+    // Impede a seleção de texto
+    const noSelect = (event: Event) => event.preventDefault();
+    document.addEventListener("selectstart", noSelect);
+
+    function onMouseMove({ clientX, clientY, target }: MouseEvent) {
       setTaskTransition("");
       setCopia(taskElement.current);
+
+      if (target instanceof HTMLDivElement) {
+        const order = target.getAttribute("data-order");
+
+        if (order) {
+          if (Number(order) < orderTeste.current) {
+            setSkeletonOrder(String(Number(order) - 2));
+            orderTeste.current = Number(order) - 2;
+          } else {
+            setSkeletonOrder(String(Number(order) + 1));
+            orderTeste.current = Number(order) + 1;
+          }
+        }
+      }
+
       if (event.target instanceof HTMLElement)
         setStyle({
-          zIndex: "1000",
+          zIndex: "-1",
           position: "absolute",
           left: clientX - event.target.offsetWidth * 0.5,
-          top: clientY,
+          top: clientY - event.target.offsetHeight * 0.5,
         });
     }
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", () => {
+      document.removeEventListener("selectstart", noSelect);
       setCopia(null);
       setStyle({});
       setTaskTransition("0.2s");
@@ -92,13 +114,17 @@ const Task = ({ id }: { id: number }) => {
   return (
     <>
       {copia && (
-        <div className={`${styles.task} ${styles.taskSkeleton} container`} />
+        <div
+          className={`${styles.task} ${styles.taskSkeleton} container`}
+          style={{ order: skeletonOrder }}
+        />
       )}
       <div
         ref={taskElement}
         className={`${styles.task} ${active && styles.active} container`}
         onMouseDown={handleTaskMouseDown}
-        style={{ ...style, transition: taskTransition }}
+        style={{ ...style, transition: taskTransition, order: task.id }}
+        data-order={task.id}
       >
         <p className={styles.date}>Última alteração - {task.date}</p>
         <button
