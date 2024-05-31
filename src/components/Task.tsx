@@ -168,6 +168,18 @@ const Task = ({ id }: { id: number }) => {
     }
   }
 
+  function handleTrashClick() {
+    const newTasks = tasks.filter((taskItem) => {
+      return taskItem.id !== task.id;
+    });
+
+    // Se for a última task não haverá mais o componente task para que
+    // o useEffect execute e salve no localStorage, por isso o if
+    if (newTasks.length === 0)
+      window.localStorage.setItem("tasks", JSON.stringify(newTasks));
+    setTasks(newTasks);
+  }
+
   return (
     <>
       {isOnTaskMovement && (
@@ -214,14 +226,7 @@ const Task = ({ id }: { id: number }) => {
           >
             <Pencil />
           </button>
-          <button
-            data-action="true"
-            onClick={() =>
-              setTasks(() =>
-                tasks.filter((taskItem) => taskItem.id !== task.id)
-              )
-            }
-          >
+          <button data-action="true" onClick={handleTrashClick}>
             <Trash />
           </button>
         </div>

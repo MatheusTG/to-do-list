@@ -7,6 +7,8 @@ import { useTasks } from "../context/TaskContext";
 const Tasks = () => {
   const { tasks } = useTasks();
 
+
+
   const createdTasks = tasks.length;
   const compretedTasks = tasks.filter((item) => item.checked).length;
 
