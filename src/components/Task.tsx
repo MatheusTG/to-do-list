@@ -87,7 +87,16 @@ const Task = ({ id }: { id: number }) => {
 
   // Executa ao mouseup após o mousedawn na task
   function handleMouseUp() {
-    if (!wasMoved.current) return;
+    if (!wasMoved.current) {
+      document.body.style.cursor = "initial";
+      setTaskTransition("0.2s");
+      setIsOnTaskMovement(false);
+      setStylePosition({});
+      document.removeEventListener("selectstart", noSelect);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      return;
+    }
     setStylePosition({
       zIndex: "-1",
       position: "absolute",
@@ -123,17 +132,19 @@ const Task = ({ id }: { id: number }) => {
     }, 200);
 
     // Remove os eventos e reseta as variáveis de estado
-    document.body.style.cursor = 'initial'
+    document.body.style.cursor = "initial";
     setTaskTransition("0.2s");
     document.removeEventListener("selectstart", noSelect);
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
+
+    wasMoved.current = false
   }
 
   // Executa ao mousedown na task
   function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
     if (target instanceof HTMLElement && !target.getAttribute("data-action")) {
-      document.body.style.cursor = 'grab'
+      document.body.style.cursor = "grab";
       document.addEventListener("selectstart", noSelect);
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
