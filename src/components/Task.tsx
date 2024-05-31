@@ -84,10 +84,6 @@ const Task = ({ id }: { id: number }) => {
 
   // Executa ao mouseup após o mousedawn na task
   function handleMouseUp() {
-    document.removeEventListener("selectstart", noSelect);
-    window.removeEventListener("mousemove", onMouseMove);
-    setTaskTransition("0.2s");
-
     setStylePosition({
       zIndex: "-1",
       position: "absolute",
@@ -98,12 +94,18 @@ const Task = ({ id }: { id: number }) => {
     const newTasks = tasks.slice();
 
     newTasks.map((taskItem) => {
-      if (taskItem.order >= skeletonOrderReference.current) {
-        return ++taskItem.order;
+      if (task.order < skeletonOrderReference.current - 1) {
+        if (taskItem.order >= skeletonOrderReference.current) {
+          return ++taskItem.order;
+        }
+      } else if (task.order > skeletonOrderReference.current - 1) {
+        if (taskItem.order <= skeletonOrderReference.current) {
+          return --taskItem.order;
+        }
       }
     });
     newTasks.map((taskItem) => {
-      if (taskItem.order === task.order) {
+      if (taskItem.id === task.id) {
         taskItem.order = skeletonOrderReference.current;
         return taskItem.order;
       }
@@ -116,14 +118,20 @@ const Task = ({ id }: { id: number }) => {
       setStylePosition({});
     }, 200);
 
+    // Remove os eventos e reseta as variáveis de estado
+    setTaskTransition("0.2s");
+    document.removeEventListener("selectstart", noSelect);
+    window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
   }
 
   // Executa ao mousedown na task
-  function handleTaskMouseDown() {
-    document.addEventListener("selectstart", noSelect);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+  function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
+    if (target instanceof HTMLElement && !target.getAttribute("data-action")) {
+      document.addEventListener("selectstart", noSelect);
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
   }
 
   // Atualiza o atributo cheked da task toda vez que o botão
@@ -185,6 +193,7 @@ const Task = ({ id }: { id: number }) => {
           className={`${styles.checkedButton} ${
             task.checked && styles.checked
           }`}
+          data-action="true"
           onClick={handleCheckedClick}
         />
         <input
@@ -200,11 +209,13 @@ const Task = ({ id }: { id: number }) => {
         <div className={styles.options}>
           <button
             className={active ? styles.active : ""}
+            data-action="true"
             onClick={() => setActive(!active)}
           >
             <Pencil />
           </button>
           <button
+            data-action="true"
             onClick={() =>
               setTasks(() =>
                 tasks.filter((taskItem) => taskItem.id !== task.id)

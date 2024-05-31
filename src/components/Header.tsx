@@ -33,7 +33,7 @@ const Header = () => {
         checked: false,
         message: message,
         date: formattedDate,
-        order: id,
+        order: id * 2 + 1,
       };
       setTasks(() => [...tasks, newTask]);
       setMessase("");
