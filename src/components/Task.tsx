@@ -34,6 +34,7 @@ const Task = ({ id }: { id: number }) => {
   const taskElement = React.useRef<HTMLDivElement>(null);
   const skeletonOrderReference = React.useRef(0);
   const taskSkeleton = React.useRef<HTMLDivElement>(null);
+  const wasMoved = React.useRef(false);
 
   // Se active for true faz o focus no input senão adiciona o blur
   React.useEffect(() => {
@@ -48,7 +49,8 @@ const Task = ({ id }: { id: number }) => {
   }, [tasks]);
 
   // Executa ao mover o mouse após o mousedown na task
-  function onMouseMove({ clientX, clientY, target }: MouseEvent) {
+  function onMouseMove({ clientY, target }: MouseEvent) {
+    wasMoved.current = true;
     setTaskTransition("");
     setIsOnTaskMovement(true);
 
@@ -68,13 +70,14 @@ const Task = ({ id }: { id: number }) => {
     }
 
     // Faz com que a task siga o mouse
-    if (taskElement.current instanceof HTMLElement)
+    if (taskElement.current instanceof HTMLElement) {
       setStylePosition({
         zIndex: "-1",
         position: "absolute",
-        left: clientX - taskElement.current.offsetWidth * 0.5,
+        // left: clientX - taskElement.current.offsetWidth * 0.5,
         top: clientY - taskElement.current.offsetHeight * 0.5,
       });
+    }
   }
 
   // Impede a seleção de texto
@@ -84,6 +87,7 @@ const Task = ({ id }: { id: number }) => {
 
   // Executa ao mouseup após o mousedawn na task
   function handleMouseUp() {
+    if (!wasMoved.current) return;
     setStylePosition({
       zIndex: "-1",
       position: "absolute",
@@ -119,6 +123,7 @@ const Task = ({ id }: { id: number }) => {
     }, 200);
 
     // Remove os eventos e reseta as variáveis de estado
+    document.body.style.cursor = 'initial'
     setTaskTransition("0.2s");
     document.removeEventListener("selectstart", noSelect);
     window.removeEventListener("mousemove", onMouseMove);
@@ -128,6 +133,7 @@ const Task = ({ id }: { id: number }) => {
   // Executa ao mousedown na task
   function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
     if (target instanceof HTMLElement && !target.getAttribute("data-action")) {
+      document.body.style.cursor = 'grab'
       document.addEventListener("selectstart", noSelect);
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
