@@ -11,11 +11,13 @@ export interface TaskType {
   checked: boolean;
   message: string;
   date: string;
+  order: number;
 }
 
 const Task = ({ id }: { id: number }) => {
   const { tasks, setTasks } = useTasks();
-  const task = tasks.filter((task) => task.id === id)[0];
+  const taskRef = React.useRef(tasks.filter((task) => task.id === id)[0]);
+  const task = taskRef.current;
 
   // Estados reativos
   const [active, setActive] = React.useState(false);
@@ -31,6 +33,7 @@ const Task = ({ id }: { id: number }) => {
   const inputMessage = React.useRef<HTMLInputElement>(null);
   const taskElement = React.useRef<HTMLDivElement>(null);
   const skeletonOrderReference = React.useRef(0);
+  const taskSkeleton = React.useRef<HTMLDivElement>(null);
 
   // Se active for true faz o focus no input senão adiciona o blur
   React.useEffect(() => {
@@ -55,7 +58,7 @@ const Task = ({ id }: { id: number }) => {
 
       if (order) {
         if (Number(order) < skeletonOrderReference.current) {
-          setSkeletonOrder(String(Number(order) - 2));
+          setSkeletonOrder(String(Number(order) - 1));
           skeletonOrderReference.current = Number(order) - 1;
         } else {
           setSkeletonOrder(String(Number(order) + 1));
@@ -83,9 +86,37 @@ const Task = ({ id }: { id: number }) => {
   function handleMouseUp() {
     document.removeEventListener("selectstart", noSelect);
     window.removeEventListener("mousemove", onMouseMove);
-    setIsOnTaskMovement(false);
-    setStylePosition({});
     setTaskTransition("0.2s");
+
+    setStylePosition({
+      zIndex: "-1",
+      position: "absolute",
+      left: taskSkeleton.current?.offsetLeft,
+      top: taskSkeleton.current?.offsetTop,
+    });
+
+    const newTasks = tasks.slice();
+
+    newTasks.map((taskItem) => {
+      if (taskItem.order >= skeletonOrderReference.current) {
+        return ++taskItem.order;
+      }
+    });
+    newTasks.map((taskItem) => {
+      if (taskItem.order === task.order) {
+        taskItem.order = skeletonOrderReference.current;
+        return taskItem.order;
+      }
+    });
+
+    // O setTimeout possibilita que a animação ocorra ao soltar a task
+    setTimeout(() => {
+      setTasks(newTasks);
+      setIsOnTaskMovement(false);
+      setStylePosition({});
+    }, 200);
+
+    window.removeEventListener("mouseup", handleMouseUp);
   }
 
   // Executa ao mousedown na task
@@ -133,6 +164,7 @@ const Task = ({ id }: { id: number }) => {
     <>
       {isOnTaskMovement && (
         <div
+          ref={taskSkeleton}
           className={`${styles.task} ${styles.taskSkeleton} container`}
           style={{ order: skeletonOrder }}
         />
@@ -141,8 +173,12 @@ const Task = ({ id }: { id: number }) => {
         ref={taskElement}
         className={`${styles.task} ${active && styles.active} container`}
         onMouseDown={handleTaskMouseDown}
-        style={{ ...stylePosition, transition: taskTransition, order: task.id }}
-        data-order={task.id}
+        style={{
+          ...stylePosition,
+          transition: taskTransition,
+          order: task.order,
+        }}
+        data-order={task.order}
       >
         <p className={styles.date}>Última alteração - {task.date}</p>
         <button

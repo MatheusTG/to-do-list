@@ -26,9 +26,11 @@ const Tasks = () => {
       <main>
         {tasks.length ? (
           <div className={styles.tasksList}>
-            {tasks.map((task) => (
-              <Task key={task.id} id={task.id} />
-            ))}
+            {tasks
+              .sort((a, b) => a.order - b.order)
+              .map((task) => (
+                <Task key={task.id} id={task.id} />
+              ))}
           </div>
         ) : (
           <div className={styles.noTasks}>
