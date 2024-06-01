@@ -72,6 +72,7 @@ const Task = ({ id }: { id: number }) => {
     // Faz com que a task siga o mouse
     if (taskElement.current instanceof HTMLElement) {
       setStylePosition({
+        transform: "scale(0.96)",
         zIndex: "-1",
         position: "absolute",
         // left: clientX - taskElement.current.offsetWidth * 0.5,
@@ -138,12 +139,21 @@ const Task = ({ id }: { id: number }) => {
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
 
-    wasMoved.current = false
+    wasMoved.current = false;
   }
 
   // Executa ao mousedown na task
   function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
     if (target instanceof HTMLElement && !target.getAttribute("data-action")) {
+      // Faz com que ocorra o efeito de scale na task ao clique
+      setIsOnTaskMovement(true);
+      setStylePosition({
+        transform: "scale(0.96)",
+        zIndex: "-1",
+        position: 'absolute',
+        top: taskElement.current?.offsetTop
+      });
+
       document.body.style.cursor = "grab";
       document.addEventListener("selectstart", noSelect);
       window.addEventListener("mousemove", onMouseMove);
