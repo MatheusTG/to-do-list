@@ -158,6 +158,7 @@ const Task = ({ id }: { id: number }) => {
     ) {
       // Faz com que ocorra o efeito de scale na task ao clique
       setIsOnTaskMovement(true);
+      setSkeletonOrder(target.getAttribute('data-order')!)
       setStylePosition({
         transform: "scale(0.96)",
         zIndex: "-1",
