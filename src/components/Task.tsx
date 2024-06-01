@@ -223,13 +223,13 @@ const Task = ({ id }: { id: number }) => {
       {isOnTaskMovement && (
         <div
           ref={taskSkeleton}
-          className={`${styles.task} ${styles.taskSkeleton} container`}
+          className={`${styles.task} ${styles.taskSkeleton} container task`}
           style={{ order: skeletonOrder }}
         />
       )}
       <div
         ref={taskElement}
-        className={`${styles.task} ${active && styles.active} container`}
+        className={`${styles.task} ${active && styles.active} container task`}
         onMouseDown={handleTaskMouseDown}
         style={{
           ...stylePosition,

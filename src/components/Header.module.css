@@ -46,14 +46,15 @@
 .form input {
   width: 100%;
   background-color: var(--gray-500);
+  border: 1px solid var(--gray-700);
   color: var(--gray-300);
-  border: none;
   padding: 1rem;
   border-radius: 0.5rem;
 }
 
 .form input:focus {
-  outline: 1px solid var(--gray-300);
+  border-color: var(--gray-300);
+  outline: none;
 }
 
 .form button {

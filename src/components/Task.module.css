@@ -4,10 +4,15 @@
   align-items: center;
   gap: 0.75rem;
   margin-top: 0px;
+  outline: 1px solid var(--gray-400);
   background-color: var(--gray-500);
   border-radius: 0.5rem;
   position: relative;
   margin-top: 0px;
+}
+
+.task:hover {
+  background-color: #242524;
 }
 
 .task button {
