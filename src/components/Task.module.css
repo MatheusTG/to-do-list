@@ -7,7 +7,6 @@
   background-color: var(--gray-500);
   border-radius: 0.5rem;
   position: relative;
-  cursor: grab;
   margin-top: 0px;
 }
 
@@ -69,6 +68,7 @@
 
 .options button:last-child {
   padding-right: 1rem;
+  cursor: grab;
 }
 
 .options button:hover path,
@@ -84,7 +84,7 @@
 }
 
 .checkedButton:after {
-  content: '';
+  content: "";
   border-radius: 50%;
   border: 2px solid var(--blue);
   width: 1rem;

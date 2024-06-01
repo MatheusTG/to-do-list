@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Task.module.css";
 import Trash from "../assets/icons/Trash.svg?react";
 import Pencil from "../assets/icons/Pencil.svg?react";
+import MovePoints from "../assets/icons/MovePoints.svg?react";
 import { useTasks } from "../context/TaskContext";
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
@@ -55,8 +56,13 @@ const Task = ({ id }: { id: number }) => {
     setIsOnTaskMovement(true);
 
     // Altera a posição do skeleton da task
-    if (target instanceof HTMLDivElement) {
-      const order = target.getAttribute("data-order");
+    if (target instanceof HTMLElement) {
+      // Faz com que o target não seja um item interno da task,
+      // mas sim a task em si
+      const taskB = target.getAttribute("data-order")
+        ? target
+        : target.parentElement?.parentElement;
+      const order = taskB?.getAttribute("data-order");
 
       if (order) {
         if (Number(order) < skeletonOrderReference.current) {
@@ -144,17 +150,22 @@ const Task = ({ id }: { id: number }) => {
 
   // Executa ao mousedown na task
   function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
-    if (target instanceof HTMLElement && !target.getAttribute("data-action")) {
+    if (
+      target instanceof Element &&
+      !target.getAttribute("data-action") &&
+      !target.parentElement?.getAttribute("data-action") &&
+      !active
+    ) {
       // Faz com que ocorra o efeito de scale na task ao clique
       setIsOnTaskMovement(true);
       setStylePosition({
         transform: "scale(0.96)",
         zIndex: "-1",
-        position: 'absolute',
-        top: taskElement.current?.offsetTop
+        position: "absolute",
+        top: taskElement.current?.offsetTop,
       });
 
-      document.body.style.cursor = "grab";
+      document.body.style.cursor = "grabbing";
       document.addEventListener("selectstart", noSelect);
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
@@ -224,6 +235,7 @@ const Task = ({ id }: { id: number }) => {
           ...stylePosition,
           transition: taskTransition,
           order: task.order,
+          cursor: "grab",
         }}
         data-order={task.order}
       >
@@ -243,7 +255,7 @@ const Task = ({ id }: { id: number }) => {
           onChange={({ target }) => setMessage(target.value)}
           onBlur={handleBlur}
           onKeyUp={({ key }) => key === "Enter" && setActive(false)}
-          style={{ pointerEvents: "none" }}
+          style={{ pointerEvents: active ? "initial" : "none" }}
         />
         <div className={styles.options}>
           <button
@@ -255,6 +267,9 @@ const Task = ({ id }: { id: number }) => {
           </button>
           <button data-action="true" onClick={handleTrashClick}>
             <Trash />
+          </button>
+          <button className={isOnTaskMovement ? styles.active : ""}>
+            <MovePoints />
           </button>
         </div>
       </div>
