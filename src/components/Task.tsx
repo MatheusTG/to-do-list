@@ -50,18 +50,39 @@ const Task = ({ id }: { id: number }) => {
   }, [tasks]);
 
   // Executa ao mover o mouse após o mousedown na task
-  function onMouseMove({ clientY, target }: MouseEvent) {
+  function onMouseMove(event: Event) {
     wasMoved.current = true;
     setTaskTransition("");
     setIsOnTaskMovement(true);
 
+    // Faz com que a task siga o mouse
+    let top = 0;
+    let left = 0;
+    let element = event.target;
+    if (taskElement.current instanceof HTMLElement) {
+      if (event instanceof MouseEvent) top = event.clientY;
+      else if (event instanceof TouchEvent) {
+        top = event.changedTouches[0].clientY;
+        left = event.changedTouches[0].clientX;
+        element = document.elementFromPoint(left, top);
+      }
+
+      setStylePosition({
+        transform: "scale(0.96)",
+        zIndex: "-1",
+        position: "absolute",
+        // left: clientX - taskElement.current.offsetWidth * 0.5,
+        top: top + window.scrollY - taskElement.current.offsetHeight * 0.5,
+      });
+    }
+
     // Altera a posição do skeleton da task
-    if (target instanceof HTMLElement) {
+    if (element instanceof HTMLElement) {
       // Faz com que o target não seja um item interno da task,
       // mas sim a task em si
-      const taskB = target.getAttribute("data-order")
-        ? target
-        : target.parentElement?.parentElement;
+      const taskB = element.getAttribute("data-order")
+        ? element
+        : element.parentElement?.parentElement;
       const order = taskB?.getAttribute("data-order");
 
       if (order) {
@@ -73,17 +94,6 @@ const Task = ({ id }: { id: number }) => {
           skeletonOrderReference.current = Number(order) + 1;
         }
       }
-    }
-
-    // Faz com que a task siga o mouse
-    if (taskElement.current instanceof HTMLElement) {
-      setStylePosition({
-        transform: "scale(0.96)",
-        zIndex: "-1",
-        position: "absolute",
-        // left: clientX - taskElement.current.offsetWidth * 0.5,
-        top: clientY - taskElement.current.offsetHeight * 0.5,
-      });
     }
   }
 
@@ -101,6 +111,7 @@ const Task = ({ id }: { id: number }) => {
       setStylePosition({});
       document.removeEventListener("selectstart", noSelect);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       return;
     }
@@ -149,7 +160,10 @@ const Task = ({ id }: { id: number }) => {
   }
 
   // Executa ao mousedown na task
-  function handleTaskMouseDown({ target }: React.MouseEvent<HTMLElement>) {
+  type MouseAndTouchEvent =
+    | React.MouseEvent<HTMLElement>
+    | React.TouchEvent<HTMLElement>;
+  function handleTaskMouseDown({ target }: MouseAndTouchEvent) {
     if (
       target instanceof Element &&
       !target.getAttribute("data-action") &&
@@ -158,7 +172,7 @@ const Task = ({ id }: { id: number }) => {
     ) {
       // Faz com que ocorra o efeito de scale na task ao clique
       setIsOnTaskMovement(true);
-      setSkeletonOrder(target.getAttribute('data-order')!)
+      setSkeletonOrder(target.getAttribute("data-order")!);
       setStylePosition({
         transform: "scale(0.96)",
         zIndex: "-1",
@@ -170,6 +184,8 @@ const Task = ({ id }: { id: number }) => {
       document.addEventListener("selectstart", noSelect);
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", onMouseMove);
+      window.addEventListener("touchend", handleMouseUp);
     }
   }
 
@@ -232,6 +248,7 @@ const Task = ({ id }: { id: number }) => {
         ref={taskElement}
         className={`${styles.task} ${active && styles.active} container task`}
         onMouseDown={handleTaskMouseDown}
+        onTouchStart={handleTaskMouseDown}
         style={{
           ...stylePosition,
           transition: taskTransition,
